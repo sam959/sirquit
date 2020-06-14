@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:sirquit/navigator/navigator.dart';
 import 'package:sirquit/src/ui/components/drawerMenu.dart';
@@ -44,28 +43,6 @@ class LPFilterCalculator extends StatefulWidget {
 }
 
 class _LPFilterCalculatorState extends State<LPFilterCalculator> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PersistentAppBar("Low Pass Filter").build(context),
-      body: Column(
-        children: <Widget>[
-          LowPassInputForm(),
-        ],
-      ),
-    );
-  }
-}
-
-/// Inputform class for Calculators
-class LowPassInputForm extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _LowPassInputFormState();
-}
-
-class _LowPassInputFormState extends State<LowPassInputForm> {
-  ValueNotifier<bool> pressed = ValueNotifier(false);
-
   final resistanceTextController = TextEditingController();
   final capacitorTextController = TextEditingController();
   final frequencyTextController = TextEditingController();
@@ -93,18 +70,30 @@ class _LowPassInputFormState extends State<LowPassInputForm> {
 
   @override
   Widget build(BuildContext context) {
-    print('state update');
-    return Form(
-      onChanged: () => setState(() {}),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Column(children: <Widget>[
-                /// Resistance
-                Visibility(
-                  visible: checkResistanceController(),
+    return Scaffold(
+      appBar: PersistentAppBar("Low Pass Filter").build(context),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          createCalculator(),
+        ],
+      ),
+    );
+  }
+
+  Widget createCalculator() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 3,
+          child: Form(
+            onChanged: () => setState(() {}),
+            child: Column(children: <Widget>[
+              /// Resistance
+              Visibility(
+                visible: checkResistanceController(),
+                child: SizedBox(
+                  width: 250,
                   child: TextFormField(
                     enabled: checkResistanceController(),
                     onEditingComplete: () => print('object'),
@@ -118,10 +107,13 @@ class _LowPassInputFormState extends State<LowPassInputForm> {
                     ),
                   ),
                 ),
+              ),
 
-                /// Capacitor
-                Visibility(
-                  visible: checkCapacitorController(),
+              /// Capacitor
+              Visibility(
+                visible: checkCapacitorController(),
+                child: SizedBox(
+                  width: 250,
                   child: TextFormField(
                     enabled: checkCapacitorController(),
                     controller: capacitorTextController,
@@ -133,10 +125,13 @@ class _LowPassInputFormState extends State<LowPassInputForm> {
                         hintText: 'Enter capacitor value'),
                   ),
                 ),
+              ),
 
-                /// Frequency
-                Visibility(
-                  visible: checkFrequencyController(),
+              /// Frequency
+              Visibility(
+                visible: checkFrequencyController(),
+                child: SizedBox(
+                  width: 250,
                   child: TextFormField(
                     enabled: checkFrequencyController(),
                     controller: frequencyTextController,
@@ -148,33 +143,39 @@ class _LowPassInputFormState extends State<LowPassInputForm> {
                         hintText: 'Enter desired cutoff frequency'),
                   ),
                 ),
-                SizedBox(
-                  height: 40,
-                ),
-                RaisedButton(
-                  elevation: 5.0,
-                  color: Colors.deepOrange,
-                  child: Text('Calculate'),
-                  onPressed: enableButton() ? () => calculateLowPass() : null,
-                ),
-              ]),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                dropdownButton(<String>['Ohms', '2', '3']),
-                SizedBox(
-                  height: 50,
-                  width: 50,
-                  child: Container(
-                    decoration: BoxDecoration(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(
+                height: 40,
+              ),
+
+              /// Button
+              RaisedButton(
+                elevation: 5.0,
+                color: Colors.deepOrange,
+                child: Text('Calculate'),
+                onPressed: enableButton() ? () => calculateLowPass() : null,
+              ),
+            ]),
+          ),
         ),
-      ),
+
+        /// DropDownButtonMenu
+        Expanded(
+          flex: 1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              dropdownButton(
+                  <String>['Ohms', '2', '3'], (value) => print(value)),
+              dropdownButton(
+                  <String>['Ohms', '2', '3'], (value) => print(value)),
+              dropdownButton(
+                  <String>['Ohms', '2', '3'], (value) => print(value)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
