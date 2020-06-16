@@ -72,11 +72,14 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PersistentAppBar("Low Pass Filter").build(context),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          createCalculator(),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Flexible(fit: FlexFit.loose, child: createCalculator()),
+          ],
+        ),
       ),
     );
   }
@@ -151,7 +154,7 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
               /// Button
               RaisedButton(
                 elevation: 5.0,
-                color: Colors.deepOrange,
+                color: Colors.orangeAccent,
                 child: Text('Calculate'),
                 onPressed: enableButton() ? () => calculateLowPass() : null,
               ),

@@ -38,10 +38,10 @@ class _DropdownValuesState extends State<DropdownValues> {
       icon: Icon(Icons.arrow_downward),
       iconSize: 15,
       elevation: 16,
-      style: TextStyle(color: Colors.deepPurple),
+      style: TextStyle(color: Colors.deepOrange),
       underline: Container(
         height: 2,
-        color: Colors.deepPurpleAccent,
+        color: Colors.deepOrangeAccent,
       ),
       items: itemsList,
       onChanged: (value) {
