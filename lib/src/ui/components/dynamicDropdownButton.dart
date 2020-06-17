@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 
-Widget dropdownButton(List<String> items, Function(String) onChanged) {
+Widget dynamicDropdownButton(ValueNotifier<bool> isVisible, List<String> items,
+    Function(String) onChanged) {
   var itemsList = items
       .map<DropdownMenuItem<String>>((String value) => DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+            ),
           ))
       .toList();
 
-  return DropdownValues(itemsList, onChanged);
+  return ValueListenableBuilder(
+      valueListenable: isVisible,
+      builder: (BuildContext context, isVisible, Widget child) {
+        return Visibility(
+          visible: isVisible,
+          child: DropdownValues(itemsList, onChanged),
+        );
+      });
 }
 
 class DropdownValues extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sirquit/navigator/navigator.dart';
 import 'package:sirquit/src/ui/components/drawerMenu.dart';
-import 'package:sirquit/src/ui/components/dropdownButton.dart';
+import 'package:sirquit/src/ui/components/dynamicDropdownButton.dart';
 import 'package:sirquit/src/ui/components/persistentAppBar.dart';
 
 class Calculators extends StatefulWidget {
@@ -51,17 +51,33 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
   bool capacitorEnabled = true;
   bool frequencyEnabled = true;
 
-  bool checkResistanceController() =>
-      frequencyTextController.text.isEmpty ||
-      capacitorTextController.text.isEmpty;
+  ValueNotifier<bool> resistanceShown = ValueNotifier<bool>(true);
+  ValueNotifier<bool> capacitorShown = ValueNotifier<bool>(true);
+  ValueNotifier<bool> frequencyShown = ValueNotifier<bool>(true);
 
-  bool checkCapacitorController() =>
-      frequencyTextController.text.isEmpty ||
-      resistanceTextController.text.isEmpty;
+  bool checkResistanceController() {
+    resistanceShown.value = frequencyTextController.text.isEmpty ||
+        capacitorTextController.text.isEmpty;
+    var value = resistanceShown.value;
+    print('Setting resistance visibility to: $value');
+    return resistanceShown.value;
+  }
 
-  bool checkFrequencyController() =>
-      resistanceTextController.text.isEmpty ||
-      capacitorTextController.text.isEmpty;
+  bool checkCapacitorController() {
+    capacitorShown.value = frequencyTextController.text.isEmpty ||
+        resistanceTextController.text.isEmpty;
+    var value = capacitorShown.value;
+    print('Setting capacitor visibility to: $value');
+    return capacitorShown.value;
+  }
+
+  bool checkFrequencyController() {
+    frequencyShown.value = resistanceTextController.text.isEmpty ||
+        capacitorTextController.text.isEmpty;
+    var value = frequencyShown.value;
+    print('Setting frequency visibility to: $value');
+    return frequencyShown.value;
+  }
 
   bool enableButton() =>
       !checkFrequencyController() ||
@@ -99,7 +115,6 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
                   width: 250,
                   child: TextFormField(
                     enabled: checkResistanceController(),
-                    onEditingComplete: () => print('object'),
                     controller: resistanceTextController,
                     inputFormatters: <TextInputFormatter>[
                       WhitelistingTextInputFormatter.digitsOnly
@@ -169,12 +184,12 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              dropdownButton(
-                  <String>['Ohms', '2', '3'], (value) => print(value)),
-              dropdownButton(
-                  <String>['Ohms', '2', '3'], (value) => print(value)),
-              dropdownButton(
-                  <String>['Ohms', '2', '3'], (value) => print(value)),
+              dynamicDropdownButton(
+                  resistanceShown, resMeasures, (value) => print(value)),
+              dynamicDropdownButton(
+                  capacitorShown, capMeasures, (value) => print(value)),
+              dynamicDropdownButton(
+                  frequencyShown, freqMeasures, (value) => print(value)),
             ],
           ),
         ),
@@ -212,4 +227,8 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
     frequencyTextController.dispose();
     super.dispose();
   }
+
+  final resMeasures = ['Ohms', 'KOhms', 'MOhms'];
+  final capMeasures = ['Farads', 'Milli', 'Micro', 'Nano', 'Pico'];
+  final freqMeasures = ['Hz', 'Khz', 'Mhz'];
 }
