@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget dynamicDropdownButton(ValueNotifier<bool> isVisible, List<String> items,
+Widget dynamicDropdownButton(ValueNotifier<bool> isEnabled, List<String> items,
     Function(String) onChanged) {
   var itemsList = items
       .map<DropdownMenuItem<String>>((String value) => DropdownMenuItem<String>(
@@ -13,12 +13,10 @@ Widget dynamicDropdownButton(ValueNotifier<bool> isVisible, List<String> items,
       .toList();
 
   return ValueListenableBuilder(
-      valueListenable: isVisible,
-      builder: (BuildContext context, isVisible, Widget child) {
-        return Visibility(
-          visible: isVisible,
-          child: DropdownValues(itemsList, onChanged),
-        );
+      valueListenable: isEnabled,
+      builder: (BuildContext context, isEnabled, Widget child) {
+        print('Dropdown menu $isEnabled');
+        return DropdownValues(isEnabled ? itemsList : null, onChanged);
       });
 }
 
@@ -39,7 +37,7 @@ class _DropdownValuesState extends State<DropdownValues> {
   Function onChanged;
 
   _DropdownValuesState(this.itemsList, this.onChanged) {
-    dropdownValue = itemsList.first.value;
+    dropdownValue = itemsList?.first?.value;
   }
 
   @override
@@ -49,7 +47,8 @@ class _DropdownValuesState extends State<DropdownValues> {
       icon: Icon(Icons.arrow_downward),
       iconSize: 15,
       elevation: 16,
-      style: TextStyle(color: Colors.deepOrange),
+      style: TextStyle(
+          color: Colors.deepOrange, fontSize: 15, fontWeight: FontWeight.bold),
       underline: Container(
         height: 2,
         color: Colors.deepOrangeAccent,
