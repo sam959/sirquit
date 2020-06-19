@@ -43,6 +43,7 @@ class LPFilterCalculator extends StatefulWidget {
 }
 
 class _LPFilterCalculatorState extends State<LPFilterCalculator> {
+  static const radiansPerSec = 0.159154;
   final resistanceTextController = TextEditingController();
   final capacitorTextController = TextEditingController();
   final frequencyTextController = TextEditingController();
@@ -171,7 +172,11 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
                 elevation: 5.0,
                 color: Colors.orangeAccent,
                 child: Text('Calculate'),
-                onPressed: enableButton() ? () => calculateLowPass() : null,
+                onPressed: enableButton()
+                    ? () {
+                        calculateLowPass();
+                      }
+                    : null,
               ),
             ]),
           ),
@@ -197,16 +202,14 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
     );
   }
 
-  void calculateLowPass() {
+  bool calculateLowPass() {
     var resistance = resistanceTextController.text.trim();
     var capacitor = capacitorTextController.text.trim();
     var frequency = frequencyTextController.text.trim();
 
-    var resInt = 0;
-    var capInt = 0;
-    var freqInt = 0;
-
-    var empty = "";
+    var resInt;
+    var capInt;
+    var freqInt;
 
     if (resistance.isNotEmpty) {
       resInt = int.parse(resistance);
@@ -217,9 +220,35 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
     if (frequency.isNotEmpty) {
       freqInt = int.parse(frequency);
     }
+    /*
 
-    print(
-        '$checkResistanceController, $checkCapacitorController, $checkFrequencyController');
+      Capacitance = ( 1/2pi) / (FR) Farad
+      Frequency = ( 1/ 2pi) / C / R Hz Ohm base 200
+      Resistance = ( 1/2pi) / (C/F) Farad
+
+     */
+
+    double result;
+
+    if (resInt != null) {
+      if (capInt != null) {
+        //Calculate Frequency
+        print('Calculating F');
+        result = (radiansPerSec / resInt / capInt);
+      } else {
+        // Calculate Capacitance
+        print('Calculating C');
+        result = (radiansPerSec / freqInt / resInt);
+      }
+    } else if (capInt != null) {
+      if (freqInt != null) {
+        //Calculate Resistance
+        print('Calculating R');
+        result = (radiansPerSec / capInt / freqInt);
+      }
+    }
+    print('Result is $result');
+    return true;
   }
 
   @override
