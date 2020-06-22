@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sirquit/src/navigator/navigator.dart';
+import 'package:sirquit/src/sections/calculator/bloc/lp_calculator_events.dart';
+import 'package:sirquit/src/sections/calculator/bloc/lpcalulator_bloc_bloc.dart';
 import 'package:sirquit/src/ui/components/drawerMenu.dart';
 import 'package:sirquit/src/ui/components/dynamicDropdownButton.dart';
 import 'package:sirquit/src/ui/components/persistentAppBar.dart';
@@ -43,6 +46,7 @@ class LPFilterCalculator extends StatefulWidget {
 }
 
 class _LPFilterCalculatorState extends State<LPFilterCalculator> {
+  LPCalulatorBloc _lpCalulatorBloc;
   static const radiansPerSec = 0.159154;
   final resistanceTextController = TextEditingController();
   final capacitorTextController = TextEditingController();
@@ -81,6 +85,12 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
       !checkResistanceController();
 
   @override
+  void initState() {
+    super.initState();
+    _lpCalulatorBloc = LPCalulatorBloc();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PersistentAppBar("Low Pass Filter").build(context),
@@ -97,131 +107,143 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
   }
 
   Widget createCalculator() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Form(
-                onChanged: () => setState(() {}),
-                child: Column(children: <Widget>[
-                  /// Resistance
-                  SizedBox(
-                    width: 250,
-                    child: TextFormField(
-                      enabled: checkResistanceController(),
-                      controller: resistanceTextController,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter resistance value',
+    return BlocProvider(
+      create: (BuildContext context) => _lpCalulatorBloc,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                flex: 3,
+                child: Form(
+                  onChanged: () => setState(() {}),
+                  child: Column(children: <Widget>[
+                    /// Resistance
+                    SizedBox(
+                      width: 250,
+                      child: TextFormField(
+                        enabled: checkResistanceController(),
+                        controller: resistanceTextController,
+                        inputFormatters: <TextInputFormatter>[
+                          WhitelistingTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter resistance value',
+                        ),
                       ),
                     ),
-                  ),
 
-                  /// Capacitor
-                  SizedBox(
-                    width: 250,
-                    child: TextFormField(
-                      enabled: checkCapacitorController(),
-                      controller: capacitorTextController,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter capacitor value'),
+                    /// Capacitor
+                    SizedBox(
+                      width: 250,
+                      child: TextFormField(
+                        enabled: checkCapacitorController(),
+                        controller: capacitorTextController,
+                        inputFormatters: <TextInputFormatter>[
+                          WhitelistingTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                            hintText: 'Enter capacitor value'),
+                      ),
                     ),
-                  ),
 
-                  /// Frequency
-                  SizedBox(
-                    width: 250,
-                    child: TextFormField(
-                      enabled: checkFrequencyController(),
-                      controller: frequencyTextController,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter desired cutoff frequency'),
+                    /// Frequency
+                    SizedBox(
+                      width: 250,
+                      child: TextFormField(
+                        enabled: checkFrequencyController(),
+                        controller: frequencyTextController,
+                        inputFormatters: <TextInputFormatter>[
+                          WhitelistingTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                            hintText: 'Enter desired cutoff frequency'),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ]),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ]),
+                ),
               ),
-            ),
 
-            /// DropDownButtonMenu
-            Flexible(
-              fit: FlexFit.loose,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  dynamicDropdownButton(
-                      resistanceShown, resMeasures, (value) => print(value)),
-                  dynamicDropdownButton(
-                      capacitorShown, capMeasures, (value) => print(value)),
-                  dynamicDropdownButton(
-                      frequencyShown, freqMeasures, (value) => print(value)),
-                ],
+              /// DropDownButtonMenu
+              Flexible(
+                fit: FlexFit.loose,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    dynamicDropdownButton(
+                        resistanceShown,
+                        resMeasures,
+                        (value) =>
+                            _lpCalulatorBloc.add(ResistanceUnitChanged(value))),
+                    dynamicDropdownButton(
+                        capacitorShown,
+                        capMeasures,
+                        (value) =>
+                            _lpCalulatorBloc.add(CapacitorUnitChanged(value))),
+                    dynamicDropdownButton(
+                        frequencyShown,
+                        freqMeasures,
+                        (value) =>
+                            _lpCalulatorBloc.add(FrequencyUnitChanged(value))),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
 
-        /// Button and result
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            /// Button
-            RaisedButton(
-              elevation: 5.0,
-              color: Colors.orangeAccent,
-              child: Text('Calculate'),
-              onPressed: enableButton()
-                  ? () {
-                      calculateLowPass();
-                    }
-                  : null,
-            ),
-            Flexible(
-              fit: FlexFit.loose,
-              child: ValueListenableBuilder(
-                valueListenable: filterResult,
-                builder: (BuildContext context, value, Widget child) {
-                  return Visibility(
-                    visible: value != null,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Flexible(
-                          fit: FlexFit.loose,
-                          child: Text(
-                            filterResult.value.toString(),
-                            style: TextStyle(fontSize: 20),
+          /// Button and result
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              /// Button
+              RaisedButton(
+                elevation: 5.0,
+                color: Colors.orangeAccent,
+                child: Text('Calculate'),
+                onPressed: enableButton()
+                    ? () {
+                        calculateLowPass();
+                      }
+                    : null,
+              ),
+              Flexible(
+                fit: FlexFit.loose,
+                child: ValueListenableBuilder(
+                  valueListenable: filterResult,
+                  builder: (BuildContext context, value, Widget child) {
+                    return Visibility(
+                      visible: value != null,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 20,
                           ),
-                        )
-                      ],
-                    ),
-                  );
-                },
+                          Flexible(
+                            fit: FlexFit.loose,
+                            child: Text(
+                              filterResult.value.toString(),
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -281,3 +303,9 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
   final capMeasures = ['F', '	mF', 'μF', 'nF', 'pF'];
   final freqMeasures = ['Hz', 'KHz', 'MHz'];
 }
+
+enum ReistanceUnits { OHM, KOHM, MOH }
+
+enum CapacitorUnits { FARAD, MILLIF, MICROF, NANOF, PICOF }
+
+enum FrequencyUnits { HERTZ, KHERTZ, MHERTZ }

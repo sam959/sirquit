@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sirquit/navigator/navigator.dart';
+import 'package:sirquit/src/navigator/navigator.dart';
 
 class DrawerMenu extends StatelessWidget {
   @override
