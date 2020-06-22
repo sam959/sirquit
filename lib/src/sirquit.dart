@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sirquit/src/ui/components/drawerMenu.dart';
 import 'package:sirquit/src/ui/components/persistentAppBar.dart';
@@ -11,27 +12,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PersistentAppBar(title).build(context),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: NotificationListener<OverscrollIndicatorNotification>(
-                onNotification: (OverscrollIndicatorNotification overScroll) {
-                  overScroll.disallowGlow();
-                  return false;
-                },
-                child: buildListView(),
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text('Expanded 2')),
-            )
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Flexible(
+            fit: FlexFit.loose,
+            child: buildListView(),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -74,40 +62,40 @@ ListView buildFittedListView() {
   );
 }
 
-ListView buildListView() {
-  return ListView(
-    scrollDirection: Axis.horizontal,
-    children: <Widget>[
-      shopCard(Colors.orange[400], 'Chips'),
-      shopCard(Colors.amber[400], 'Sensors'),
-      shopCard(Colors.deepOrange[400], 'Cables'),
-    ],
+Widget buildListView() {
+  return SizedBox(
+    height: 70,
+    child: NotificationListener<OverscrollIndicatorNotification>(
+      onNotification: (OverscrollIndicatorNotification overScroll) {
+        overScroll.disallowGlow();
+        return false;
+      },
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[
+          buildCard(Colors.orange[400], 'Chips'),
+          buildCard(Colors.amber[400], 'Sensors'),
+          buildCard(Colors.deepOrange[400], 'Cables'),
+        ],
+      ),
+    ),
   );
 }
 
-Widget shopCard(Color color, String title) {
-  return Align(
-    alignment: Alignment.center,
-    child: SizedBox(
-      height: 70,
-      width: 150,
-      child: Card(
-        color: color,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ListTile(
-              trailing: Icon(Icons.arrow_drop_down),
-              title: FittedBox(
-                child: Text(
-                  title,
-                  style: TextStyle(fontFamily: 'SpaceMono'),
-                ),
-              ),
-              onTap: () {},
-            ),
-          ],
+Widget buildCard(Color color, String title) {
+  return SizedBox(
+    width: 150,
+    child: Card(
+      color: color,
+      child: ListTile(
+        trailing: Icon(Icons.arrow_drop_down),
+        title: FittedBox(
+          child: Text(
+            title,
+            style: TextStyle(fontFamily: 'SpaceMono'),
+          ),
         ),
+        onTap: () {},
       ),
     ),
   );
