@@ -1,9 +1,10 @@
+import 'src/navigator/navigator.dart';
 import 'src/sirquit.dart';
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/Ribes/Documents/My%20Apps/sirquit/lib/src/ui/sections/converters.dart';
-import 'file:///C:/Users/Ribes/Documents/My%20Apps/sirquit/lib/src/ui/sections/tutorials.dart';
-import 'file:///C:/Users/Ribes/Documents/My%20Apps/sirquit/lib/src/ui/sections/calculators.dart';
-import 'package:sirquit/navigator/navigator.dart';
+
+import 'src/sections/calculator/calculators.dart';
+import 'src/sections/converters.dart';
+import 'src/sections/tutorials.dart';
 
 void main() => runApp(MaterialApp(
       title: 'Sirquit',

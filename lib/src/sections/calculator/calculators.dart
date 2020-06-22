@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sirquit/navigator/navigator.dart';
+import 'package:sirquit/src/navigator/navigator.dart';
 import 'package:sirquit/src/ui/components/drawerMenu.dart';
 import 'package:sirquit/src/ui/components/dynamicDropdownButton.dart';
 import 'package:sirquit/src/ui/components/persistentAppBar.dart';
