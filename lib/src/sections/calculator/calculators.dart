@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sirquit/src/navigator/navigator.dart';
 import 'package:sirquit/src/sections/calculator/bloc/lp_calculator_events.dart';
 import 'package:sirquit/src/sections/calculator/bloc/lpcalulator_bloc_bloc.dart';
+import 'package:sirquit/src/sections/calculator/bloc/units_extention.dart';
 import 'package:sirquit/src/ui/components/drawerMenu.dart';
 import 'package:sirquit/src/ui/components/dynamicDropdownButton.dart';
 import 'package:sirquit/src/ui/components/persistentAppBar.dart';
@@ -180,17 +181,17 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
                   children: <Widget>[
                     dynamicDropdownButton(
                         resistanceShown,
-                        resMeasures,
+                        ResistanceUnits.values(),
                         (value) =>
                             _lpCalulatorBloc.add(ResistanceUnitChanged(value))),
                     dynamicDropdownButton(
                         capacitorShown,
-                        capMeasures,
+                        CapacitorUnits.values(),
                         (value) =>
                             _lpCalulatorBloc.add(CapacitorUnitChanged(value))),
                     dynamicDropdownButton(
                         frequencyShown,
-                        freqMeasures,
+                        FrequencyUnits.values(),
                         (value) =>
                             _lpCalulatorBloc.add(FrequencyUnitChanged(value))),
                   ],
@@ -248,6 +249,7 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
   }
 
   bool calculateLowPass() {
+    _lpCalulatorBloc.add(CalculatePressed(true));
     var resistance = resistanceTextController.text.trim();
     var capacitor = capacitorTextController.text.trim();
     var frequency = frequencyTextController.text.trim();
@@ -266,11 +268,9 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
       freqInt = int.parse(frequency);
     }
     /*
-
       Capacitance = ( 1/2pi) / (FR) Farad
       Frequency = ( 1/ 2pi) / C / R Hz Ohm base 200
       Resistance = ( 1/2pi) / (C/F) Farad
-
      */
 
     if (resInt != null) {
@@ -298,14 +298,4 @@ class _LPFilterCalculatorState extends State<LPFilterCalculator> {
     frequencyTextController.dispose();
     super.dispose();
   }
-
-  final resMeasures = ['Ω', 'kΩ', 'MΩ'];
-  final capMeasures = ['F', '	mF', 'μF', 'nF', 'pF'];
-  final freqMeasures = ['Hz', 'KHz', 'MHz'];
 }
-
-enum ReistanceUnits { OHM, KOHM, MOH }
-
-enum CapacitorUnits { FARAD, MILLIF, MICROF, NANOF, PICOF }
-
-enum FrequencyUnits { HERTZ, KHERTZ, MHERTZ }

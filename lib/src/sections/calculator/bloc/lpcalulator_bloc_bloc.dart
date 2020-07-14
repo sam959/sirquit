@@ -20,26 +20,41 @@ class LPCalulatorBloc extends CalculatorBloc {
   Stream<CalculatorBlocState> mapEventToState(
     CalculatorBlocEvent event,
   ) async* {
-    switch (event.runtimeType) {
-      case ResistanceInserted:
-        break;
-      case CapacitorInserted:
-        break;
-      case FrequencyInserted:
-        break;
+    yield* _mapCalculatorEventToState(event);
+  }
+}
 
-      /// Unity changes
-      case ResistanceUnitChanged:
-        yield CalculatorResistanceInProgress(event.props.first);
-        break;
-      case CapacitorUnitChanged:
-        yield CalculatorCapacitorInProgress(event.props.first);
-        break;
-      case FrequencyUnitChanged:
-        yield CalculatorFrequencyInProgress(event.props.first);
-        break;
-      case CalculatePressed:
-        break;
-    }
+Stream<CalculatorBlocState> _mapCalculatorEventToState(
+    CalculatorBlocEvent event) async* {
+  switch (event.runtimeType) {
+    case ResistanceInserted:
+      yield InputResistanceInProgress(event.props.first);
+      break;
+    case CapacitorInserted:
+      yield InputCapacitorInProgress(event.props.first);
+      break;
+    case FrequencyInserted:
+      yield InputFrequencyInProgress(event.props.first);
+      break;
+
+    /// Unity changes
+    case ResistanceUnitChanged:
+      String unit = event.props.first;
+
+      yield CalculatorResistanceConvertion(unit: unit);
+      break;
+    case CapacitorUnitChanged:
+      String unit = event.props.first;
+
+      yield CalculatorCapacitorConvertion(unit: unit);
+      break;
+    case FrequencyUnitChanged:
+      String unit = event.props.first;
+
+      yield CalculatorFrequencyConvertion(unit: unit);
+      break;
+    case CalculatePressed:
+      yield CalculatorSuccess(event.props);
+      break;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:sirquit/src/blocs/calulator_blocs.dart';
+import 'package:sirquit/src/sections/calculator/bloc/units_extention.dart';
 
 abstract class LowPassCalculatorState extends CalculatorBlocState {
   final List myProps;
@@ -16,30 +17,48 @@ class CalculatorInitial extends LowPassCalculatorState {
   String toString() => 'CalculatorInitial';
 }
 
-class CalculatorResistanceInProgress extends LowPassCalculatorState {
+/// Input new value
+class InputResistanceInProgress extends LowPassCalculatorState {
   final String value;
-  CalculatorResistanceInProgress(this.value) : super([value]);
+  InputResistanceInProgress(this.value) : super([value]);
 
   @override
-  String toString() => 'CalculatorInitial';
+  String toString() => 'CalculatorResistanceInProgress';
 }
 
-class CalculatorCapacitorInProgress extends LowPassCalculatorState {
+class InputCapacitorInProgress extends LowPassCalculatorState {
   final String value;
-  CalculatorCapacitorInProgress(this.value) : super([value]);
+  InputCapacitorInProgress(this.value) : super([value]);
 
   @override
   String toString() => 'CalculatorCapacitorInProgress';
 }
 
-class CalculatorFrequencyInProgress extends LowPassCalculatorState {
+class InputFrequencyInProgress extends LowPassCalculatorState {
   final String value;
-  CalculatorFrequencyInProgress(this.value) : super([value]);
+  InputFrequencyInProgress(this.value) : super([value]);
 
   @override
   String toString() => 'CalculatorFrequencyInProgress';
 }
 
+/// Unity changed
+class CalculatorResistanceConvertion extends LowPassCalculatorState {
+  final String unit;
+  CalculatorResistanceConvertion({this.unit}) : super([unit]);
+}
+
+class CalculatorCapacitorConvertion extends LowPassCalculatorState {
+  final String unit;
+  CalculatorCapacitorConvertion({this.unit}) : super([unit]);
+}
+
+class CalculatorFrequencyConvertion extends LowPassCalculatorState {
+  final String unit;
+  CalculatorFrequencyConvertion({this.unit}) : super([unit]);
+}
+
+/// Result
 class CalculatorSuccess extends LowPassCalculatorState {
   final String result;
 
